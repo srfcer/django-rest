@@ -6,13 +6,13 @@ from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
-from inmuebleslist_app.api.permissions import AdminOrReadOnly, ComentarioUserOrReadOnly
 from django.shortcuts import get_object_or_404
-from inmuebleslist_app.api.permissions import AdminOrReadOnly
+from inmuebleslist_app.api.permissions import IsAdminOrReadOnly, IsComentarioUserOrReadOnly
 
 
 class ComentarioCreate(generics.CreateAPIView):
     serializer_class = ComentarioSerializer
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return Comentario.objects.all()
@@ -48,7 +48,7 @@ class ComentarioList(generics.ListCreateAPIView):
 class ComentarioDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
-    permission_classes = [ComentarioUserOrReadOnly]
+    permission_classes = [IsComentarioUserOrReadOnly]
     
 
 # class ComentarioList(mixins.CreateModelMixin, mixins.ListModelMixin, generics.GenericAPIView):
@@ -70,7 +70,7 @@ class ComentarioDetail(generics.RetrieveUpdateDestroyAPIView):
     
 
 class EmpresaVS(viewsets.ModelViewSet):
-    permission_classes = [AdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
     queryset = Empresa.objects.all()
     serializer_class = EmpresaSerializer
 
@@ -121,7 +121,7 @@ class EmpresaDetalleAV(APIView):
 
     
 class EdificacionAV(APIView):
-    
+    permission_classes = [IsAdminOrReadOnly]    
     def get(self, request, format=None):
         inmuebles = Edificacion.objects.all()
         serializer = EdificacionSerializer(inmuebles, many=True)
@@ -135,6 +135,7 @@ class EdificacionAV(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EdificacionDetalleAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]    
     def get(self, request, pk, format=None):
         try:
             inmueble = Edificacion.objects.get(pk=pk)
