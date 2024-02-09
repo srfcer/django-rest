@@ -8,9 +8,20 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from inmuebleslist_app.api.permissions import IsAdminOrReadOnly, IsComentarioUserOrReadOnly
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle, ScopedRateThrottle
 from inmuebleslist_app.api.throttling import ComentarioCreateThrottle, ComentarioListThrottle
+from django_filters.rest_framework import DjangoFilterBackend
 
+class UsuarioComentario(generics.ListAPIView):
+    serializer_class = ComentarioSerializer
+    # def get_queryset(self):
+    #     username = self.kwargs['username']
+    #     return Comentario.objects.filter(comentario_user__username=username)
+    
+    def get_queryset(self):
+        username = self.request.query_params.get('username',None)
+        return Comentario.objects.filter(comentario_user__username=username)
+    
 
 class ComentarioCreate(generics.CreateAPIView):
     serializer_class = ComentarioSerializer
@@ -44,6 +55,9 @@ class ComentarioList(generics.ListCreateAPIView):
     serializer_class = ComentarioSerializer 
     #permission_classes = [IsAuthenticated] #para que usuario logueado puede consultar la data
     throttle_classes = [ComentarioListThrottle,AnonRateThrottle]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['comentario_user__username', 'active']
+    
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Comentario.objects.filter(edificacion=pk)
@@ -52,7 +66,10 @@ class ComentarioDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
     permission_classes = [IsComentarioUserOrReadOnly]
-    throttle_classes = [UserRateThrottle,AnonRateThrottle]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "comentario-detail"
+
+
 
 # class ComentarioList(mixins.CreateModelMixin, mixins.ListModelMixin, generics.GenericAPIView):
 #     queryset = Comentario.objects.all()

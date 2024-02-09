@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from inmuebleslist_app.api.views import (EdificacionAV, EdificacionDetalleAV,ComentarioList,ComentarioDetail,ComentarioCreate, EmpresaVS)
+from inmuebleslist_app.api.views import (EdificacionAV, EdificacionDetalleAV,
+        ComentarioList,ComentarioDetail,ComentarioCreate, EmpresaVS,UsuarioComentario)
 
 router = DefaultRouter()
 router.register('empresa', EmpresaVS, basename='empresa')
@@ -16,4 +17,6 @@ urlpatterns = [
     path('edificacion/<int:pk>/comentario-create/',ComentarioCreate.as_view(),name='comentario-create'),
     path('edificacion/<int:pk>/comentario/',ComentarioList.as_view(),name='comentario-list'),
     path('edificacion/comentario/<int:pk>',ComentarioDetail.as_view(),name='comentario-detail'),
+    #path('edificacion/comentarios/<str:username>/',UsuarioComentario.as_view(),name='usuario-comentario-detail'),
+    path('edificacion/comentarios/',UsuarioComentario.as_view(),name='usuario-comentario-detail'),
 ]

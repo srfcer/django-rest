@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'user_app',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -149,6 +150,7 @@ REST_FRAMEWORK = {
          'user': '10/day',
          'comentario-create': '2/day',
          'comentario-list': '8/day',
+         'comentario-detail': '3/day',
      }
 }
 
