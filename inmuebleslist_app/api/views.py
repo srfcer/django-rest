@@ -12,6 +12,7 @@ from rest_framework.throttling import AnonRateThrottle, UserRateThrottle, Scoped
 from inmuebleslist_app.api.throttling import ComentarioCreateThrottle, ComentarioListThrottle
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from inmuebleslist_app.api.pagination import EdificacionPagination, EdificacionLOPagination
 
 
 class UsuarioComentario(generics.ListAPIView):
@@ -146,7 +147,8 @@ class EdificacionList(generics.ListAPIView):
     #filter_backends = [DjangoFilterBackend]*
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     #filterset_fields = ['direccion', 'empresa__nombre']*
-    search_fields = ['direccion', 'empresa__nombre']    
+    search_fields = ['direccion', 'empresa__nombre']
+    pagination_class = EdificacionPagination
 
     
 class EdificacionAV(APIView):
